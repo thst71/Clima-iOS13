@@ -7,25 +7,32 @@ import Foundation
 
 struct WeatherService {
 
-    let apiKey = "33486c1118da447b0a7ccffa2c68003e"
-    let weatherURLtemplate = "https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}&units=metric"
+    enum WeatherServiceError: Error {
+        case InvalidWeatherAPIURL
+    }
 
+    let apiURLs: OpenWeatherDataAPIURLGenerator? = OpenWeatherDataAPIURLGenerator(apiKey: "33486c1118da447b0a7ccffa2c68003e")
     var urlSession: URLSession = URLSession.shared
 
     public var delegate: WeatherServiceDelegate?
 
-    private func getWeatherURL(cityName: String) -> URL? {
-        URL(string: weatherURLtemplate
-                .replacingOccurrences(of: "{city name}", with: cityName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
-                .replacingOccurrences(of: "{API key}", with: apiKey))
+    func obtainWeatherData(cityName: String) {
+        let weatherURLString = apiURLs!.forCityName(cityName)
+        fetchWeatherData(weatherURLString)
     }
 
-    func obtainWeatherData(_ cityName: String) {
-        if let weatherURL = getWeatherURL(cityName: cityName) {
+    func obtainWeatherData(lat: String, lon: String) {
+        let weatherURLString = apiURLs!.forLocation(lat: lat, lon: lon)
+        fetchWeatherData(weatherURLString)
+    }
 
-            let task: URLSessionDataTask = urlSession.dataTask(with: weatherURL, completionHandler: handleWeatherResult)
+    private func fetchWeatherData(_ apiUrlString: String) {
+        if let apiUrl = URL(string: apiUrlString) {
+            let task: URLSessionDataTask = urlSession.dataTask(with: apiUrl, completionHandler: handleWeatherResult)
 
             task.resume()
+        } else {
+            delegate?.didReceiveErrorOnWeatherData(self, error: WeatherServiceError.InvalidWeatherAPIURL)
         }
     }
 

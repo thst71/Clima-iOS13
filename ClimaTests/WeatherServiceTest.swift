@@ -51,10 +51,6 @@ class WeatherServiceTest : XCTestCase {
         var testResult : TheServiceShouldDecodeJsonAndCallTheDelegateResult
         var assertResult : TestResultAsserter?
 
-        convenience init() {
-            self.init(TheServiceShouldDecodeJsonAndCallTheDelegateResult())
-        }
-
         init(_ testResult:TheServiceShouldDecodeJsonAndCallTheDelegateResult, assertResult : TestResultAsserter? = nil) {
             self.testResult = testResult
             self.assertResult = assertResult
@@ -65,7 +61,7 @@ class WeatherServiceTest : XCTestCase {
             assertResult?(testResult)
         }
 
-        func didReceiveErrorOnWeatherData(_ weatherService:WeatherService, error: Error) {
+        func didReceiveErrorOnWeatherData(_ weatherService: WeatherService, error: Error?) {
             testResult.weatherError = error
         }
     }
@@ -75,10 +71,11 @@ class WeatherServiceTest : XCTestCase {
         let testDelegate = WeatherServiceTestDelegate(testResult) { (testResult) in
             XCTAssertTrue(testResult.weatherError == nil)
             XCTAssertTrue(testResult.weatherData != nil)
-            XCTAssertEqual(testResult.weatherData?.name, "Cologne")
-            XCTAssertEqual(testResult.weatherData?.weather.count, 1)
-            XCTAssertEqual(testResult.weatherData?.weather[0].id, 800)
-            XCTAssertEqual(testResult.weatherData?.main.temp, 21.9)
+            XCTAssertEqual(testResult.weatherData?.cityName, "Cologne")
+            XCTAssertEqual(testResult.weatherData?.conditionId, 800)
+            XCTAssertEqual(testResult.weatherData?.conditionName, "sun.max")
+            XCTAssertEqual(testResult.weatherData?.temperature, 21.9)
+            XCTAssertEqual(testResult.weatherData?.temperatureAsString, "21.9")
         }
 
         let mockedSession = URLSessionMock()

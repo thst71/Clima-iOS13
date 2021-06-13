@@ -7,19 +7,26 @@
 //
 
 import UIKit
+import CoreLocation
 
-class WeatherViewController: UIViewController,UITextFieldDelegate,WeatherServiceDelegate {
+class WeatherViewController: UIViewController {
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var searchTextField: UITextField!
 
-    var weatherService : WeatherService = WeatherService()
-    
+    var weatherService: WeatherService = WeatherService()
+    let locationManager: CLLocationManager = CLLocationManager()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+
         searchTextField.delegate = self
         weatherService.delegate = self
     }
@@ -28,41 +35,8 @@ class WeatherViewController: UIViewController,UITextFieldDelegate,WeatherService
         searchTextField.endEditing(true)
     }
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        searchTextField.endEditing(true)
-        return true
+    @IBAction func currentLocationWeatherPressed(_ sender: UIButton) {
+        locationManager.requestLocation()
     }
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        if textField.text != "" {
-            return true
-        }
-
-        textField.placeholder = "Type some city name"
-        return false
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        print("Obtaining weather for \(searchTextField.text)")
-        if let cityName = searchTextField.text {
-            weatherService.obtainWeatherData(cityName)
-        }
-    }
-
-    func didUpdateWeatherData(_ weatherService:WeatherService, weatherData: WeatherModel) {
-        print("received data \(weatherData)")
-        DispatchQueue.main.async {
-            self.temperatureLabel.text = weatherData.temperatureAsString
-            self.cityLabel.text = weatherData.cityName
-            self.conditionImageView.image = UIImage(systemName: weatherData.conditionName)
-        }
-    }
-
-    func didReceiveErrorOnWeatherData(_ weatherService:WeatherService, error: Error) {
-        print("weather is a failure: \(error)")
-        DispatchQueue.main.async {
-        }
-    }
-
 }
 

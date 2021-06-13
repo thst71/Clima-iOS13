@@ -58,5 +58,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Um das Wetter am aktuellen Ort anzeigen zu können, brauche ich Zugriff auf deinen Aufenthaltsort, wenn die
+		App gestartet wird.
+	</string>
 </dict>
 </plist>

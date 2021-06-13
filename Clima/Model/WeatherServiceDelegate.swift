@@ -7,7 +7,7 @@ import Foundation
 
 protocol WeatherServiceDelegate {
 
-    func didUpdateWeatherData(_ weatherService: WeatherService, weatherData:WeatherModel)
-    func didReceiveErrorOnWeatherData(_ weatherService: WeatherService, error:Error)
+    func didUpdateWeatherData(_ weatherService: WeatherService, weatherData: WeatherModel)
+    func didReceiveErrorOnWeatherData(_ weatherService: WeatherService, error: Error?)
 
 }
